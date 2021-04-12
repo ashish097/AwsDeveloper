@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    stages {
+        stage('git checkout') {
+            steps{
+                git branch: 'master',
+                credentialsId: 'ashish097',
+                url: 'url of jenkins file'
+            }
+        }
+        stage('Submit Stack') {
+            steps {
+                sh "aws cloudformation create-stack --stack-name ec2instance --template-body file://instance.yml"
+            }
+        }
+    }
+}

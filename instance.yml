@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Master stack: PathToMasterStackFile'
+Parameters:
+
+Resources:
+  stackset:
+    Type: AWS::CloudFormation::StackSet
+    Properties:
+      Description: creation_of _ec2stack>
+      ExecutionRoleName: <Role-arn>
+      StackInstancesGroup:
+        - DeploymentTargets:
+            Accounts:
+              - !Ref "AWS::AccountId"
+          Regions:
+            - ap-south-1
+            - eu-west-1
+      Parameters:
+        - LatestAmiId:
+            Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+            Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+      PermissionModel: SELF_MANAGED
+      StackSetName: instance_creation
+      TemplateBody: !Sub
+      - |
+        ec2instance:
+          Type: AWS::EC2::Instance
+          Properties:
+            ImageId: !ref LatestAmiId
+            InstanceType: t2.micro
+            KeyName: mind
+            Monitoring: True
+            Role: <iam--role--arn>
+Outputs:
+  stackid:       
+    value: !GetAtt stackset.id
